@@ -1,5 +1,5 @@
 {
-    "name": "app_c",
+    "name": "test_server",
     "version": "1.0.0",
     "description": "",
     "main": "app.js",
@@ -9,7 +9,7 @@
       "test": "jest --detectOpenHandles --forceExit --coverage",
       "lint": "eslint . --ext .ts"
     },
-    "author": "Eliav Menachi",
+    "author": "Hod and Arbel",
     "license": "ISC",
     "dependencies": {
       "body-parser": "^1.20.3",

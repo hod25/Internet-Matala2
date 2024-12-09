@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import Comment from "../models/Comment";
-import Post from "../models/Post";
+import Comment from "../models/commentModel";
+import Post from "../models/postModel";
 
 export const createComment = async (req: Request, res: Response) => {
   const { content, postId, userId, parentCommentId } = req.body;
@@ -31,6 +31,8 @@ export const createComment = async (req: Request, res: Response) => {
     await newComment.save();
     res.status(201).json({ message: "Comment created successfully", comment: newComment });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    // Explicitly cast error to Error
+    const err = error as Error;
+    res.status(500).json({ error: err.message });
   }
 };

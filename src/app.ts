@@ -1,22 +1,24 @@
-import express from "express";
+import express, { Express } from "express";
+import userRoutes from "./routes/users_routes"; // Import your routes
 import bodyParser from "body-parser";
-import cors from "cors";
-import swaggerUi from "swagger-ui-express";
-import swaggerSpec from "./swagger";
-import authRoutes from "./routes/authRoutes";
-import userRoutes from "./routes/userRoutes";
-import postRoutes from "./routes/postRoutes";
-import commentRoutes from "./routes/commentRoutes";
+import dotenv from "dotenv";
 
-const app = express();
-app.use(bodyParser.json());
-app.use(cors());
+// Initialize environment variables
+dotenv.config();
 
-app.use("/api/auth", authRoutes);
+// Initialize Express app
+const app: Express = express();
+
+// Middleware setup
+app.use(bodyParser.json()); // Parse JSON body
+
+// API routes
 app.use("/api/users", userRoutes);
-app.use("/api/posts", postRoutes);
-app.use("/api/comments", commentRoutes);
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Example health check route
+app.get("/", (req, res) => {
+  res.send("Server is running!");
+});
 
+// Export the app for testing or server setup
 export default app;

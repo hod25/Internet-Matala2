@@ -1,5 +1,11 @@
+import jwt from "jsonwebtoken"; 
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: any;
+  }
+}
 
 export const validateToken = (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers["authorization"]?.split(" ")[1];

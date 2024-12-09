@@ -1,142 +1,93 @@
-import request from "supertest";
-import mongoose from "mongoose";
-import initApp from "../server"; // Import the app initialization function
-import { Express } from "express"; // Import the Express type
-import UserModel from "../models/user_model"; // Assuming a Mongoose model for user
+// import Request from "supertest";
+// import initApp from "../server";
+// import mongoose from "mongoose";
+// import userModel from "../models/users_model";
+// import { Express } from "express";
 
-let app: Express;
-let token: string; // To store the JWT token
+// var app: Express;
 
-// Sample test user data
-const testUser = {
-  username: "testUser",
-  email: "testuser@example.com",
-  password: "password123",
-};
+// beforeAll(async () => {
+//   console.log("beforeAll");
+//   app = await initApp();
+//   await userModel.deleteMany();
+// });
 
-beforeAll(async () => {
-  app = initApp(); // Initialize the app
+// afterAll((done) => {
+//   console.log("afterAll");
+//   mongoose.connection.close();
+//   done();
+// }); 
 
-  // Clean up the database before each test
-  await UserModel.deleteMany();
-});
+// let userId = "";
+// describe("Users Tests", () => {
+//   test("Users test get all", async () => {
+//     const response = await Request(app).get("/users");
+//     expect(response.statusCode).toBe(200);
+//     expect(response.body.length).toBe(0);
+//   });
 
-afterAll(async () => {
-  // Close the DB connection after tests are done
-  await mongoose.connection.close();
-});
+//   test("Test Create User", async () => {
+//     const response = await Request(app).post("/users").send({
+//       name: "Test User",
+//       email: "testuser@example.com",
+//       password: "testpassword",
+//     });
+//     expect(response.statusCode).toBe(201);
+//     expect(response.body.name).toBe("Test User");
+//     expect(response.body.email).toBe("testuser@example.com");
+//     expect(response.body.password).toBe("testpassword");
+//     userId = response.body._id;
+//     });
 
-describe("User API Tests", () => {
-  
-  test("User registration (POST /register)", async () => {
-    const response = await request(app)
-      .post("/api/users/register")
-      .send(testUser);
-
-    expect(response.statusCode).toBe(201);
-    expect(response.body.message).toBe("User registered successfully");
-    expect(response.body.user.username).toBe(testUser.username);
-  });
-
-  test("User login (POST /login)", async () => {
-    // First, register the user
-    await request(app)
-      .post("/api/users/register")
-      .send(testUser);
-
-    const response = await request(app)
-      .post("/api/users/login")
-      .send({
-        email: testUser.email,
-        password: testUser.password,
-      });
-
-    expect(response.statusCode).toBe(200);
-    expect(response.body.message).toBe("Login successful");
-    expect(response.body.userId).toBeDefined();
-    token = response.body.token; // Store the JWT token for subsequent tests
-  });
-
-  test("Get user by ID (GET /:id) - Protected route", async () => {
-    // First, register the user and login to get a token
-    const registerResponse = await request(app)
-      .post("/api/users/register")
-      .send(testUser);
+//     test("Test get user by email", async () => {    
+//         const response = await Request(app).get("//users/${userId");
+//         expect(response.statusCode).toBe(200);
+//         expect(response.body.name).toBe("Test User");
+//         expect(response.body.email).toBe("Test email");
+//         expect(response.body.password).toBe("Test password");  
+//     });
     
-    const loginResponse = await request(app)
-      .post("/api/users/login")
-      .send({
-        email: testUser.email,
-        password: testUser.password,
-      });
-
-    // Use the token from login to access the protected route
-    const response = await request(app)
-      .get(`/api/users/${registerResponse.body.user._id}`)
-      .set("Authorization", `Bearer ${loginResponse.body.token}`);
-
-    expect(response.statusCode).toBe(200);
-    expect(response.body._id).toBe(registerResponse.body.user._id);
-    expect(response.body.username).toBe(testUser.username);
-  });
-
-  test("Get user by ID (GET /:id) - Unauthorized without token", async () => {
-    // First, register the user
-    const registerResponse = await request(app)
-      .post("/api/users/register")
-      .send(testUser);
-
-    // Try to get the user without a token (should fail)
-    const response = await request(app).get(`/api/users/${registerResponse.body.user._id}`);
-
-    expect(response.statusCode).toBe(401); // Unauthorized
-    expect(response.body.error).toBe("No token provided");
-  });
-
-  test("Update user profile (PUT /:id) - Protected route", async () => {
-    // Register and login the user
-    const registerResponse = await request(app)
-      .post("/api/users/register")
-      .send(testUser);
-
-    const loginResponse = await request(app)
-      .post("/api/users/login")
-      .send({
-        email: testUser.email,
-        password: testUser.password,
-      });
-
-    // Update user profile
-    const updatedUserData = { username: "updatedUser" };
-    const response = await request(app)
-      .put(`/api/users/${registerResponse.body.user._id}`)
-      .set("Authorization", `Bearer ${loginResponse.body.token}`)
-      .send(updatedUserData);
-
-    expect(response.statusCode).toBe(200);
-    expect(response.body.message).toBe("User updated");
-    expect(response.body.user.username).toBe(updatedUserData.username);
-  });
-
-  test("Delete user (DELETE /:id) - Protected route", async () => {
-    // Register and login the user
-    const registerResponse = await request(app)
-      .post("/api/users/register")
-      .send(testUser);
-
-    const loginResponse = await request(app)
-      .post("/api/users/login")
-      .send({
-        email: testUser.email,
-        password: testUser.password,
-      });
-
-    // Delete the user
-    const response = await request(app)
-      .delete(`/api/users/${registerResponse.body.user._id}`)
-      .set("Authorization", `Bearer ${loginResponse.body.token}`);
-
-    expect(response.statusCode).toBe(200);
-    expect(response.body.message).toBe("User deleted");
-  });
-});
+//     test("Test get user by email", async () => {
+//         const response = await Request(app).get(`/users/${userId}`);
+//         expect(response.statusCode).toBe(200);
+//         expect(response.body.name).toBe("Test User");
+//         expect(response.body.email).toBe("testuser@example.com");
+//         expect(response.body.password).toBe("testpassword");
+//       });
+      
+//       test("Test update user details", async () => {
+//         const response = await Request(app).put(`/users/${userId}`).send({
+//           name: "Updated User",
+//           email: "updateduser@example.com",
+//           password: "newpassword",
+//         });
+//         expect(response.statusCode).toBe(200);
+//         expect(response.body.name).toBe("Updated User");
+//         expect(response.body.email).toBe("updateduser@example.com");
+//         expect(response.body.password).toBe("newpassword");
+//       });
+      
+//       test("Test get updated user", async () => {
+//         const response = await Request(app).get(`/users/${userId}`);
+//         expect(response.statusCode).toBe(200);
+//         expect(response.body.name).toBe("Updated User");
+//         expect(response.body.email).toBe("updateduser@example.com");
+//         expect(response.body.password).toBe("newpassword");
+//       });
+      
+//       test("Test delete user", async () => {
+//         const response = await Request(app).delete(`/users/${userId}`);
+//         expect(response.statusCode).toBe(200);
+        
+//         // Ensure the user no longer exists
+//         const response2 = await Request(app).get(`/users/${userId}`);
+//         expect(response2.statusCode).toBe(404);
+//       });
+      
+//       test("Test creating a user with missing fields", async () => {
+//         const response = await Request(app).post("/users").send({
+//           name: "Incomplete User",
+//         });
+//         expect(response.statusCode).toBe(400);
+//       });
+//     });

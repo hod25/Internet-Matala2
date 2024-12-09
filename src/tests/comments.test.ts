@@ -1,7 +1,7 @@
 import request from "supertest";
 import initApp from "../server";
 import mongoose from "mongoose";
-import commentsModel from "../models/comments_Model";
+import commentsModel from "../models/comments_model";
 import { Express } from "express";
 import testComments from "./test_comments.json";
 

@@ -1,4 +1,4 @@
-import commentsModel, { IComments } from "../models/comments_Model";
+import commentsModel, { IComments } from "../models/comments_model";
 import { Request, Response } from "express";
 import BaseController from "./base_controller";
 

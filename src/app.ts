@@ -1,24 +1,10 @@
-import express, { Express } from "express";
-import userRoutes from "./routes/users_routes"; // Import your routes
-import bodyParser from "body-parser";
-import dotenv from "dotenv";
+import initApp from "./server";
+const port = process.env.PORT;
 
-// Initialize environment variables
-dotenv.config();
-
-// Initialize Express app
-const app: Express = express();
-
-// Middleware setup
-app.use(bodyParser.json()); // Parse JSON body
-
-// API routes
-app.use("/api/users", userRoutes);
-
-// Example health check route
-app.get("/", (req, res) => {
-  res.send("Server is running!");
+console.log("1");
+initApp().then((app) => {
+  app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`);
+  });
 });
 
-// Export the app for testing or server setup
-export default app;

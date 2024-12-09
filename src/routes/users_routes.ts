@@ -1,22 +1,14 @@
-import express, { Request, Response } from "express";
-import userController from "../controllers/user_controller";
-import { validateToken } from "../middleware/auth"; // Middleware for token validation
-
+import express from "express";
 const router = express.Router();
+import usersController from "../controllers/users_controller";
 
-// User registration
-router.post("/register", (req: Request, res: Response) => userController.register(req, res));
+router.get("/", usersController.getAll.bind(usersController));
 
-// User login
-router.post("/login", (req: Request, res: Response) => userController.login(req, res));
+router.get("/:id", usersController.getById.bind(usersController));
 
-// Get user by ID (protected route)
-router.get("/:id", validateToken, (req: Request, res: Response) => userController.getById(req, res));
+router.post("/", usersController.create.bind(usersController));
 
-// Update user profile (protected route)
-router.put("/:id", validateToken, (req: Request, res: Response) => userController.update(req, res));
-
-// Delete user (protected route)
-router.delete("/:id", validateToken, (req: Request, res: Response) => userController.delete(req, res));
+router.delete("/:id", usersController.deleteItem.bind(usersController));
 
 export default router;
+>>>>>>> sec

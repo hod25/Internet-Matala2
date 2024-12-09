@@ -1,45 +1,36 @@
-import express, { Express, Application } from "express";
-import bodyParser from "body-parser";
-import dotenv from "dotenv";
-import userRoutes from "./routes/users_routes";
-import commentsRoutes from "./routes/comments_routes";
-import mongoose from "mongoose";
-import comments_routes from "./routes/comments_routes";
-
-// Load environment variables from .env file
+import dotenv from "dotenv"
 dotenv.config();
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import express, { Express } from "express";
+import postsRoute from "./routes/posts_route";
+import commentsRoute from "./routes/comments_route";
 
-// Initialize express app
-const app: Application = express();
-
-// Middleware to parse JSON requests
+const app = express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/posts", postsRoute);
+app.use("/comments", commentsRoute);
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI || "", {
-  })
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((err) => {
-    console.error("Error connecting to MongoDB:", err.message);
-    process.exit(1); // Exit the process with failure
+const db = mongoose.connection;
+db.on("error", (error) => console.error(error));
+db.once("open", () => console.log("Connected to database"));
+
+const initApp = () => {
+  return new Promise<Express>((resolve, reject) => {
+    if (!process.env.DB_CONNECT) {
+      reject("DB_CONNECT is not defined in .env file");
+    } else {
+      mongoose
+        .connect(process.env.DB_CONNECT)
+        .then(() => {
+          resolve(app);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    }
   });
+};
 
-// Use routes
-// app.use("/api/comments", commentsRoutes); // Route for handling comments
-// app.use("/api/posts", postRoutes); // Route for handling posts
-
-// Root endpoint
-app.get("/", (req, res) => {
-  res.send("Server is running...");
-});
-
-// Set up the server to listen on a port
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
-export default app; // Export the app instance as default
+export default initApp;

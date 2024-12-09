@@ -1,7 +1,7 @@
 import request from "supertest";
 import initApp from "../server";
 import mongoose from "mongoose";
-import postModel from "../models/posts_Model";
+import postModel from "../models/posts_model";
 import { Express } from "express";
 
 var app: Express;

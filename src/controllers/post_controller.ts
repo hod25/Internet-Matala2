@@ -1,4 +1,4 @@
-import postModel from "../models/posts_Model";
+import postModel from "../models/posts_model";
 import { Request, Response } from "express";
 import baseController from "./base_controller";
 

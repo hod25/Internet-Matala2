@@ -28,8 +28,8 @@ mongoose
   });
 
 // Use routes
-app.use("/api/comments", commentsRoutes); // Route for handling comments
-app.use("/api/posts", postRoutes); // Route for handling posts
+// app.use("/api/comments", commentsRoutes); // Route for handling comments
+// app.use("/api/posts", postRoutes); // Route for handling posts
 
 // Root endpoint
 app.get("/", (req, res) => {
@@ -42,4 +42,4 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-export default initApp; // Export the function as default
+export default app; // Export the app instance as default

@@ -5,7 +5,7 @@ GET http://localhost:3000/posts
 
 ###
 
-GET http://localhost:3000/posts?owner=Eliav
+GET http://localhost:3000/posts?owner=Arbel
 
 ###
 
@@ -24,8 +24,4 @@ Content-Type: application/json
 
 ###
 
-<<<<<<< HEAD
 DELETE http://localhost:3000/posts/6734b0c818a1cf8344804554
-=======
-DELETE http://localhost:3000/posts/6734b0c818a1cf8344804554
->>>>>>> sec

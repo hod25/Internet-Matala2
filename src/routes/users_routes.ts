@@ -11,4 +11,4 @@ router.post("/", usersController.create.bind(usersController));
 router.delete("/:id", usersController.deleteItem.bind(usersController));
 
 export default router;
->>>>>>> sec
+

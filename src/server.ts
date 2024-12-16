@@ -5,7 +5,7 @@ dotenv.config();
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import posts_routes from "./routes/posts_route";
-import comments_routes from "./routes/comments_routes";
+import comments_routes from "./routes/comments_route";
 import auth_routes from "./routes/auth_routes";
 
 const initApp = (): Promise<Express> => {

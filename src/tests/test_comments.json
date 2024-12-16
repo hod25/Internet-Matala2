@@ -1,17 +1,17 @@
 [
     {
         "comment": "This is a comment",
-        "owner": "Eliav",
+        "owner": "User",
         "postId": "safgsefdgsdfgsd"
     },
     {
         "comment": "This is another comment",
-        "owner": "Eliav",
+        "owner": "User",
         "postId": "safgsefdgsdfgsd"
     },
     {
         "comment": "This is another comment",
-        "owner": "Eliav2",
+        "owner": "User2",
         "postId": "safgsefdgsdfgsd"
     }
 ]

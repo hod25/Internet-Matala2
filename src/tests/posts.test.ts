@@ -46,7 +46,7 @@ describe("Posts Tests", () => {
       .send({
         title: "Test Post",
         content: "Test Content",
-        owner: "TestOwner",
+        owner: testUser._id,
       });
     expect(response.statusCode).toBe(201);
     expect(response.body.title).toBe("Test Post");

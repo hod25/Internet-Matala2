@@ -1,82 +1,95 @@
-// import request from "supertest";
-// import initApp from "../server";
-// import mongoose from "mongoose";
-// // import postsModel from "../models/posts_model";
-// import { Express } from "express";
-// import userModel from "../models/users_model";
-// import postsModel from "../models/posts_model";
+import request from "supertest";
+import initApp from "../server";
+import mongoose from "mongoose";
+import postModel from "../models/posts_model";
+import { Express } from "express";
+import userModel, { IUser } from "../models/users_model";
 
-// let app: Express;
+var app: Express;
 
-// beforeAll(async () => {
-//   app = await initApp();
-//   await userModel.deleteMany();
-//   await postsModel.deleteMany();
-// });
+beforeAll(async () => {
+  console.log("beforeAll");
+  app = await initApp();
+  await userModel.deleteMany();
+  await postModel.deleteMany();
+});
 
-// afterAll(async () => {
-//   await mongoose.connection.close();
-// });
+afterAll((done) => {
+  console.log("afterAll");
+  mongoose.connection.close();
+  done();
+});
 
-// type UserInfo = {
-//   email: string;
-//   password: string;
-//   token?: string;
-//   _id?: string;
-// };
-// const userInfo: UserInfo = {
-//   email: "eliav@gmail.com",
-//   password: "123456"
-// }
+const baseUrl = "/auth";
 
-// describe("Auth Tests", () => {
-//   test("Auth Registration", async () => {
-//     const response = await request(app).post("/auth/register").send(userInfo);
-//     expect(response.statusCode).toBe(200);
-//   });
+type User = IUser & { token?: string };
 
-//   test("Auth Registration fail", async () => {
-//     const response = await request(app).post("/auth/register").send(userInfo);
-//     expect(response.statusCode).not.toBe(200);
-//   });
+const testUser: User = {
+  email: "test@user.com",
+  password: "testpassword",
+}
 
-//   test("Auth Login", async () => {
-//     const response = await request(app).post("/auth/login").send(userInfo);
-//     console.log(response.body);
-//     expect(response.statusCode).toBe(200);
-//     const token = response.body.token;
-//     expect(token).toBeDefined();
-//     const userId = response.body._id;
-//     expect(userId).toBeDefined();
-//     userInfo.token = token;
-//     userInfo._id = userId;
-//   });
+describe("Auth Tests", () => {
+  test("Auth test register", async () => {
+    const response = await request(app).post(baseUrl + "/register").send(testUser);
+    expect(response.statusCode).toBe(200);
+  });
 
-//   test("Get protected API", async () => {
-//     const response = await request(app).post("/posts").send({
-//       owner: "invalid owner",
-//       title: "My First post",
-//       content: "This is my first post",
-//     });
-//     expect(response.statusCode).not.toBe(201);
-//     const response2 = await request(app).post("/posts").set({
-//       authorization: 'jwt ' + userInfo.token
-//     }).send({
-//       owner: "invalid owner",
-//       title: "My First post",
-//       content: "This is my first post",
-//     });
-//     expect(response2.statusCode).toBe(201);
-//   });
+  test("Auth test register fail", async () => {
+    const response = await request(app).post(baseUrl + "/register").send(testUser);
+    expect(response.statusCode).not.toBe(200);
+  });
 
-//   test("Get protected API invalid token", async () => {
-//     const response = await request(app).post("/posts").set({
-//       authorization: 'jwt ' + userInfo.token + '1'
-//     }).send({
-//       owner: userInfo._id,
-//       title: "My First post",
-//       content: "This is my first post",
-//     });
-//     expect(response.statusCode).not.toBe(201);
-//   });
-// });
+  test("Auth test register fail", async () => {
+    const response = await request(app).post(baseUrl + "/register").send({
+      email: "sdsdfsd",
+    });
+    expect(response.statusCode).not.toBe(200);
+    const response2 = await request(app).post(baseUrl + "/register").send({
+      email: "",
+      password: "sdfsd",
+    });
+    expect(response2.statusCode).not.toBe(200);
+  });
+
+  test("Auth test login", async () => {
+    const response = await request(app).post(baseUrl + "/login").send(testUser);
+    expect(response.statusCode).toBe(200);
+    const token = response.body.token;
+    expect(token).toBeDefined();
+    expect(response.body._id).toBeDefined();
+    testUser.token = token;
+    testUser._id = response.body._id;
+  });
+
+  test("Auth test login fail", async () => {
+    const response = await request(app).post(baseUrl + "/login").send({
+      email: testUser.email,
+      password: "sdfsd",
+    });
+    expect(response.statusCode).not.toBe(200);
+
+    const response2 = await request(app).post(baseUrl + "/login").send({
+      email: "dsfasd",
+      password: "sdfsd",
+    });
+    expect(response2.statusCode).not.toBe(200);
+  });
+
+  test("Auth test me", async () => {
+    const response = await request(app).post("/posts").send({
+      title: "Test Post",
+      content: "Test Content",
+      owner: "sdfSd",
+    });
+    expect(response.statusCode).not.toBe(201);
+    const response2 = await request(app).post("/posts").set(
+      { authorization: "JWT " + testUser.token }
+    ).send({
+      title: "Test Post",
+      content: "Test Content",
+      owner: "sdfSd",
+    });
+    expect(response2.statusCode).toBe(201);
+  });
+});

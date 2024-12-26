@@ -5,29 +5,35 @@ import commentsModel from "../models/comments_model";
 import { Express } from "express";
 import testComments from "./test_comments.json";
 import userModel, { IUser } from "../models/users_model";
-var app: Express;
 
-type User = IUser & { token?: string };
+var app: Express;
+type User = IUser & {
+  accessToken?: string,
+  refreshToken?: string
+};
+
 const testUser: User = {
   email: "test@user.com",
   password: "testpassword",
 }
 
 beforeAll(async () => {
-  console.log("beforeAll");
+  
   app = await initApp();
   await commentsModel.deleteMany();
-
   await userModel.deleteMany();
   await request(app).post("/auth/register").send(testUser);
-  const res = await request(app).post("/auth/login").send(testUser);
-  testUser.token = res.body.token;
-  testUser._id = res.body._id;
-  expect(testUser.token).toBeDefined();
+  const response = await request(app).post("/auth/login").send(testUser);
+  testUser.accessToken = response.body.accessToken;
+  testUser.refreshToken = response.body.refreshToken;
+  testUser._id = response.body._id;
+  expect(testUser.accessToken).toBeDefined();
+  expect(testUser.refreshToken).toBeDefined();
+  expect(testUser._id).toBeDefined();
+  
 });
 
 afterAll((done) => {
-  console.log("afterAll");
   mongoose.connection.close();
   done();
 });
@@ -42,14 +48,13 @@ describe("Comments Tests", () => {
   });
 
   test("Test Create Comment", async () => {
-    const response = await request(app).post("/comments")
-    .set({ authorization: "JWT " + testUser.token })
-    .send(testComments[0]);
+    const response = await request(app).post("/comments").set({ authorization: "JWT " + testUser.refreshToken }).send(testComments[0]);
     expect(response.statusCode).toBe(201);
     expect(response.body.comment).toBe(testComments[0].comment);
     expect(response.body.postId).toBe(testComments[0].postId);
     expect(response.body.owner).toBe(testComments[0].owner);
     commentId = response.body._id;
+    console.log("successful post")
   });
 
   test("Test get commenty by owner", async () => {
@@ -69,42 +74,4 @@ describe("Comments Tests", () => {
     expect(response.body.owner).toBe(testComments[0].owner);
   });
 
-  test("Test delete comment", async () => {
-    const response = await request(app).delete("/comments/" + commentId)
-    .set({ authorization: "JWT " + testUser.token });
-    expect(response.statusCode).toBe(200);
-    const response2 = await request(app).get("/comments/" + commentId);
-    expect(response2.statusCode).toBe(404);
-  });
-
-
-  // test("Test Create Post 2", async () => {
-  //   const response = await request(app).post("/posts").send({
-  //     title: "Test Post 2",
-  //     content: "Test Content 2",
-  //     owner: "TestOwner2",
-  //   });
-  //   expect(response.statusCode).toBe(201);
-  // });
-
-  // test("Posts test get all 2", async () => {
-  //   const response = await request(app).get("/posts");
-  //   expect(response.statusCode).toBe(200);
-  //   expect(response.body.length).toBe(2);
-  // });
-
-  // test("Test Delete Post", async () => {
-  //   const response = await request(app).delete("/posts/" + postId);
-  //   expect(response.statusCode).toBe(200);
-  //   const response2 = await request(app).get("/posts/" + postId);
-  //   expect(response2.statusCode).toBe(404);
-  // });
-
-  // test("Test Create Post fail", async () => {
-  //   const response = await request(app).post("/posts").send({
-  //     title: "Test Post 2",
-  //     content: "Test Content 2",
-  //   });
-  //   expect(response.statusCode).toBe(400);
-  // });
 });

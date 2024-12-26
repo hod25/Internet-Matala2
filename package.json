@@ -7,6 +7,8 @@
     "dev": "nodemon ./src/app.ts",
     "start": "tsc && node ./dist/app.js",
     "test": "jest --detectOpenHandles --forceExit --runInBand",
+    "testAuth": "jest --detectOpenHandles --forceExit auth.test.ts",
+    "testPost": "jest --detectOpenHandles --forceExit posts.test.ts",
     "lint": "eslint . --ext .ts"
   },
   "author": "Hod & Arbel",

@@ -64,7 +64,7 @@ describe("Users Tests", () => {
     expect(response.statusCode).toBe(200);
   });
 
-  test("Posts test get all 2", async () => {
+  test("Test get all 2", async () => {
     const response = await request(app).get(baseUrl);
     expect(response.statusCode).toBe(200);
     expect(response.body.length).toBe(2);

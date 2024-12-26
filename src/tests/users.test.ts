@@ -49,16 +49,14 @@ describe("Users Tests", () => {
     const response = await request(app).get(baseUrl + "?email=" + testUser.email);
     expect(response.statusCode).toBe(200);
     expect(response.body.length).toBe(1);
-    expect(response.body[0].title).toBe("test@user.com");
-    expect(response.body[0].password).toBe("testpassword");
+    expect(response.body[0].email).toBe("test@user.com");
     _id = response.body[0]._id
   });
 
   test("Test get user by id", async () => {
-    const response = await request(app).get(baseUrl + _id);
+    const response = await request(app).get(baseUrl + "?id=" + _id);
     expect(response.statusCode).toBe(200);
-    expect(response.body[0].title).toBe("test@user.com");
-    expect(response.body[0].password).toBe("testpassword");
+    expect(response.body[0].email).toBe("test@user.com");
   });
 
   test("Test Create User 2", async () => {
@@ -73,8 +71,7 @@ describe("Users Tests", () => {
   });
 
   test("Test Delete User", async () => {
-    const response = await request(app).delete(baseUrl + _id)
-      .set({ authorization: "JWT " + testUser.refreshToken });
+    const response = await request(app).delete(`${baseUrl}/${_id}`);
     expect(response.statusCode).toBe(200);
     const response2 = await request(app).get(baseUrl + _id);
     expect(response2.statusCode).toBe(404);

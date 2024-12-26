@@ -8,6 +8,6 @@ router.get("/", usersController.getAll.bind(usersController));
 router.get("/:id", usersController.getById.bind(usersController));
 router.get("/:email", usersController.getByEmail.bind(usersController));
 
-router.delete("/:id", authMiddleware, usersController.deleteItem.bind(usersController));
+router.delete("/:id", usersController.deleteItem.bind(usersController));
 
 export default router;

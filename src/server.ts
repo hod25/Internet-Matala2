@@ -7,7 +7,30 @@ import bodyParser from "body-parser";
 import posts_routes from "./routes/posts_route";
 import comments_routes from "./routes/comments_route";
 import auth_routes from "./routes/auth_routes";
-import users_routes from "./routes/users.routes"
+import users_routes from "./routes/users.routes";
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+
+// Swagger configuration
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "API Documentation",
+      version: "1.0.0",
+      description: "API Information",
+    },
+    servers: [
+      {
+        url: `http://localhost:${process.env.PORT}`,
+      },
+    ],
+  },
+  apis: ["./src/routes/*.ts", "./src/controllers/*.ts"], // Path to the API docs
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 const initApp = (): Promise<Express> => {
   return new Promise<Express>((resolve, reject) => {

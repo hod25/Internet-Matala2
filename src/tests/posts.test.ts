@@ -29,7 +29,6 @@ beforeAll(async () => {
   expect(testUser.accessToken).toBeDefined();
   expect(testUser.refreshToken).toBeDefined();
   expect(testUser._id).toBeDefined();
-  
 });
 
 afterAll((done) => {
